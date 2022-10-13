@@ -1,55 +1,86 @@
+import os
 
+def printBoard(gameValues):
+    # Printing Board By using gameValues 's List
+    print(f" {gameValues[0]} | {gameValues[1]} | {gameValues[2]} ")
+    print(f"---|---|---")
+    print(f" {gameValues[3]} | {gameValues[4]} | {gameValues[5]} ")
+    print(f"---|---|---")
+    print(f" {gameValues[6]} | {gameValues[7]} | {gameValues[8]} ")
 
-def print_board(first, second):
+def checkWin(gameValues):
+    # All Winning Patterns
+    wins = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]]
 
-    one = 'X' if first[0] else ('0' if second[0] else '1')
-    two = 'X' if first[1] else ('0' if second[1] else '2')
-    three = 'X' if first[2] else ('0' if second[2] else '3')
-    four = 'X' if first[3] else ('0' if second[3] else '4')
-    five = 'X' if first[4] else ('0' if second[4] else '5')
-    six = 'X' if first[5] else ('0' if second[5] else '6')
-    seven = 'X' if first[6] else ('0' if second[6] else '7')
-    eight = 'X' if first[7] else ('0' if second[7] else '8')
-    nine = 'X' if first[8] else ('0' if second[8] else '9')
-
-    print(f"{one}    {two}   {three}")
-    print(f"{four}    {five}   {six}")
-    print(f"{seven}    {eight}   {nine}")
-
-def winner(first, second):
-
-    winner_set = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]]
-
-    for set in winner_set:
-        if first[0] + first[1] + first[2] == 3:
-            print("Winner is 'X'")
+    for win in wins:
+        # if gameValues matches with the pattern and has X then X won the Match
+        if(gameValues[win[0]] == gameValues[win[1]] == gameValues[win[2]] == 'X'):
+            printBoard(gameValues)
+            print("X Won the match")
             return 1
-        elif second[0] + second[1] + second[2] == 3:
-            print("Winner is '0'")
-            return 2
+
+        # if gameValues matches with the pattern and has X then O won the Match
+        if(gameValues[win[0]] == gameValues[win[1]] == gameValues[win[2]] == 'O'):
+            printBoard(gameValues)
+            print("O Won the match")
+            return 0
+
+        # if all places are filled and no one is the winner
+        if all(isinstance(item, str) for item in gameValues):
+            printBoard(gameValues)
+            return -2
+    # return -1 if no one wons
     return -1
 
+if __name__ == '__main__':
+    print("Welcome to the Game")
+    gameValues=[0, 1, 2, 3, 4, 5, 6, 7, 8]
+    chance = 1
 
-if __name__ == "__main__":
-    first = [0, 0, 0, 0, 0, 0, 0, 0, 0]
-    second = [0, 0, 0, 0, 0, 0, 0, 0, 0]
-    print_board(first, second)
-    palo = 1  # for x turn
-    
     while(True):
-                
-        if palo:
-            position = int(input("Enter a postion for 'X': "))
-            first[position-1] = 1
-            print_board(first, second)
-        else:
-            position = int(input("Enter a position for '0': "))
-            # position = random.randint(0,9)
-            second[position-1] = 1
-            print_board(first, second)
-        
-        check = winner(first, second)
-        if check != -1:
-            print("match over")
+        try:
+            if chance == 1:
+                printBoard(gameValues)
+                print("\nX's Chance")
+                value = int(input("\nPlease enter a value: "))
+
+                # check if already filled with O
+                if gameValues[value]!= 'O':
+                    gameValues[value] = 'X'
+                else:
+                    os.system('CLS')
+                    print("\nPlease Enter Different Location for X")
+                    continue
+                os.system('CLS')
+
+            if chance == 0:
+                printBoard(gameValues)
+                print("\nZ's Chance")
+                value = int(input("\nPlease enter a value: "))
+
+                # check if already filled with X
+                if gameValues[value]!= 'X':
+                    gameValues[value] = 'O'
+                else:
+                    os.system('CLS')
+                    print("\nPlease Enter Different Location for O")
+                    continue
+                os.system('CLS')
+
+        except IndexError:
+            # exception if Value is not between 0 to 8 
+            os.system('CLS')
+            print("\nOops!! Please Enter value from 0 - 8\n")
+            continue
+
+        # for giving chance to other player
+        chance = 1 - chance
+        cwin = checkWin(gameValues)
+        # Game Draw
+        if(cwin == -2):
+            print("Game Draw")
             break
-        palo = 1 - palo
+        # Match Over
+        if(cwin != -1):
+            print("Match over")
+            break
